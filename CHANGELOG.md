@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (2026-11-12)
+
+- First release on npm, with the same code as 0.2.0: npm had already taken the 0.2.0 version number during a publish that did not go live.
+
 ## 0.2.0 (2026-11-12)
 
 - `npx artisanal-code <command>`: one command for install, check, report, profile, fix, commit-plan, doctor and hook. `install` without `--agent` asks which agent to install for. Also runs straight from GitHub with `npx github:VinodKumarM7/artisanal-code`.
