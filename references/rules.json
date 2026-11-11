@@ -198,7 +198,7 @@
       "id": "indentation-mismatch",
       "group": "naming",
       "severity": "low",
-      "autoFixable": true,
+      "autoFixable": false,
       "title": "File indented differently from the rest of the project",
       "instead": "Re-indent the file with the project's indentation, or run the project's formatter."
     },

@@ -130,7 +130,7 @@ function commentChecks(ctx) {
       const unquoted = text.replace(/"[^"]*"|“[^”]*”/g, "");
       if (AI_MENTION.test(unquoted)) ctx.add("ai-mention", i);
       else if (AI_SELF_TALK.test(unquoted)) ctx.add("ai-self-talk", i);
-      const words = wordingIn(text);
+      const words = wordingIn(unquoted);
       if (words.length) ctx.add("ai-wording", i, { message: `Filler wording: ${words.join(", ")}` });
       if (EMOJI.test(text)) ctx.add("emoji", i);
       if (isPlaceholder(text)) ctx.add("placeholder-todo", i);

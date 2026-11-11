@@ -146,3 +146,82 @@ test("the CLI plans, writes the plan file and applies by id", { skip: !hasGit },
   assert.equal(spawnSync(process.execPath, [script, "plan", dir, "--scope", "nope"]).status, 2);
   assert.equal(spawnSync(process.execPath, [script, "frobnicate", dir]).status, 2);
 });
+
+const runApp = (dir) => {
+  const res = spawnSync(process.execPath, ["src/index.js"], { cwd: dir, encoding: "utf8" });
+  assert.equal(res.status, 0, res.stderr);
+  return res.stdout;
+};
+
+test("simplify-review applies its mechanical edits without changing what the program prints", { skip: !hasGit }, (t) => {
+  const { dir } = exampleRepo(t);
+  const before = runApp(dir);
+  const plan = buildPlan(dir, "simplify");
+  assert.deepEqual(summary(plan), ["S1 delete-lines src/inventory-service.js:5-7", "S2 edit-lines src/inventory-service.js:18-22"]);
+  assert.deepEqual(plan.actions[1].ranges[0].new, ["      items.delete(sku);"]);
+  const rewrites = plan.manual.filter((m) => m.handling === "rewrite");
+  assert.equal(rewrites.length, 14);
+  assert.ok(rewrites.every((m) => m.reason), "each rewrite says what to do");
+  assert.ok(rewrites.find((m) => m.rule === "generic-name").context.lines.some((l) => l.includes("const result")), "rewrites carry their code");
+
+  const result = applyPlan(dir, plan);
+  assert.match(result.branch, /^artisanal\/simplify-review-\d{8}$/);
+  assert.deepEqual(result.applied, ["S1", "S2"]);
+  assert.equal(runApp(dir), before);
+  assert.deepEqual(runChecks(dir, { rules: ["catch-rethrow-only", "null-check-on-fresh-value"] }).findings, []);
+});
+
+test("humanize-docs deletes noise comments and strips emoji, and leaves rewrites to the skill", { skip: !hasGit }, (t) => {
+  const { dir } = exampleRepo(t);
+  const plan = buildPlan(dir, "docs");
+  assert.deepEqual(summary(plan), [
+    "D1 edit-lines README.md:3-3",
+    "D2 delete-lines src/inventory-service.js:1-1",
+    "D3 delete-lines src/inventory-service.js:11-11",
+  ]);
+  assert.deepEqual(plan.manual.map((m) => `${m.handling} ${m.rule}`).sort(), ["rewrite ai-wording", "rewrite doc-longer-than-code", "rewrite this-function-comment"]);
+  applyPlan(dir, plan);
+  assert.match(read(dir, "README.md"), /^## Features$/m);
+  assert.doesNotMatch(read(dir, "src/inventory-service.js"), /=====|Set the item/);
+  assert.match(read(dir, "src/inventory-service.js"), /^export function createInventory/, "no blank first line left behind");
+});
+
+test("unsafe simplifications become rewrites instead of edits", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "artisanal-fix-unsafe-"));
+  try {
+    writeFileSync(path.join(dir, "a.js"), [
+      "export function load(read) {",
+      "  try {",
+      "    return read();",
+      "  } catch (err) {",
+      "    throw err;",
+      "  } finally {",
+      "    read.done = true;",
+      "  }",
+      "}",
+      "export function make() {",
+      "  const list = [];",
+      "  if (list === null || make.strict) {",
+      "    throw new Error(\"no list\");",
+      "  }",
+      "  return list;",
+      "}",
+      "",
+    ].join("\n"));
+    const plan = buildPlan(dir, "simplify");
+    assert.deepEqual(plan.actions, []);
+    assert.deepEqual(plan.manual.map((m) => `${m.rule} ${m.reason}`), [
+      "catch-rethrow-only Edit by hand: the try has a finally block.",
+      "null-check-on-fresh-value Edit by hand: the condition does more than test for null.",
+    ]);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("start prepares the branch for hand edits", { skip: !hasGit }, (t) => {
+  const { dir, git } = exampleRepo(t);
+  const res = spawnSync(process.execPath, [script, "start", dir, "--scope", "docs"], { encoding: "utf8" });
+  assert.equal(res.status, 0, res.stderr);
+  assert.match(git("branch", "--show-current"), /^artisanal\/humanize-docs-\d{8}$/);
+});

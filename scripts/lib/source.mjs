@@ -84,7 +84,8 @@ export const isJsLike = (language) => language === "javascript" || language === 
 // ---- Lexers: one entry per source line with `code` (comments removed, strings masked),
 // `comment` and `doc` flags, and `text` (the comment or doc text on that line).
 
-const newLine = () => ({ code: "", comment: false, doc: false, text: "" });
+// `continued` marks a line that starts inside a multi-line string, whose indentation is content.
+const newLine = () => ({ code: "", comment: false, doc: false, text: "", continued: false });
 const finish = (line) => {
   line.text = line.text.replace(/^\s*\*+(?!\/)\s?/, "").trim();
   return line;
@@ -110,6 +111,7 @@ export function lexC(text, { backtick = false } = {}) {
       lines.push(finish(line));
       line = newLine();
       if (state === "line" || (state === "string" && quote !== "`")) state = "code";
+      if (state === "string") line.continued = true;
       continue;
     }
     if (state === "code") {
@@ -185,6 +187,7 @@ export function lexPython(text) {
       lines.push(finish(line));
       line = newLine();
       if (state === "line" || (state === "string" && quote.length === 1)) state = "code";
+      if (state === "string") line.continued = true;
       if (state === "string" && doc) line.doc = true;
       continue;
     }
