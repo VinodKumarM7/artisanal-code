@@ -1,0 +1,17 @@
+{
+  "description": "Optional Artisanal check after each file edit. Off until enabled per project with: node <plugin>/hooks/check-edit.mjs enable",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/check-edit.mjs\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

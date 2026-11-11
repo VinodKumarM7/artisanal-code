@@ -93,7 +93,8 @@ function usageSpan(parsed, v) {
 }
 const VAGUE_FUNCTION = /^(?:handle|process|do|manage|perform|execute|run)(?:data|info|item|items|stuff|thing|things|it|logic|task|tasks|work|input|output|all|everything|object|value|values)$/;
 const DUMPING_GROUND = new Set(["utils", "util", "helpers", "helper", "misc", "common", "functions", "stuff", "tools", "utilities"]);
-const THIS_FUNCTION = /^(?:this|the)\s+(?:function|method|class|helper|utility|util|component|module|hook|routine|procedure)\b|^(?:a\s+)?(?:simple\s+|small\s+)?(?:helper|utility)\s+(?:function|method)\b|^(?:function|method)\s+(?:to|that|which|for)\b/i;
+// "This hook ..." talks about the code itself; "The hook settings ..." names a domain thing.
+const THIS_FUNCTION = /^this\s+(?:function|method|class|helper|utility|util|component|module|hook|routine|procedure)\b|^the\s+(?:function|method|helper|utility|routine|procedure)\s+(?:that|which|to|will|is|does|takes|returns)\b|^(?:a\s+)?(?:simple\s+|small\s+)?(?:helper|utility)\s+(?:function|method)\b|^(?:function|method)\s+(?:to|that|which|for)\b/i;
 const CONFIG_NAME = /config|options|settings|defaults/i;
 const STUB_ERROR = /\bthrow\s+new\s+(?:\w*Error|\w*Exception)\s*\(\s*["'`]\s*(?:not (?:yet )?implemented|todo|implement me|stub)/i;
 const BANNER = /^(?:\/\/+|#+|\/\*+|\*+|--)\s*.*?([=\-*#~_+])\1{3,}/;

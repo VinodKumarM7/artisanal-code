@@ -14,6 +14,7 @@
     "profile": "node scripts/profile.mjs",
     "check": "node scripts/check.mjs",
     "fix": "node scripts/fix.mjs",
-    "commit-plan": "node scripts/commit-plan.mjs"
+    "commit-plan": "node scripts/commit-plan.mjs",
+    "report": "node scripts/report.mjs"
   }
 }

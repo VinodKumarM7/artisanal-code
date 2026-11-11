@@ -4,7 +4,7 @@ Makes AI-assisted code read like a careful developer on your team wrote it.
 
 Artisanal is a plugin for Claude Code (and other agents that read `SKILL.md` skills). It finds AI traces, leftover scripts and over-engineered code with deterministic checks, then has the agent propose small, behavior-preserving edits that follow your project's own conventions. Every change is shown before it is applied, on a new branch, so it can be reviewed and undone.
 
-> Status: **Phase 5** (commit style). All cleanup skills are available; hooks, the report and the install script for other agents come next.
+> Status: **Phase 6** (hook and report). All skills, the `/tidy` and `/tidy-check` commands and the optional edit hook are available; the install script for other agents comes next.
 
 ## What it will do
 
@@ -44,6 +44,7 @@ npm run profile -- <dir>    # print a project's style profile
 npm run check -- <dir>      # run the checks and list findings with file, line and evidence
 npm run fix -- plan <dir> --scope traces|leftovers|simplify|docs   # list proposed cleanups (changes nothing)
 npm run commit-plan -- plan <dir>                  # group staged changes into commits, show the commit style
+npm run report -- <dir>                            # write .artisanal/report.md and report.html with a cleanliness score
 claude plugin validate .    # plugin and marketplace manifests
 ```
 

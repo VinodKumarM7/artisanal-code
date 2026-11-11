@@ -2,6 +2,7 @@
 
 ## 0.0.1 (unreleased)
 
+- Phase 6 hook and report: `/tidy` and `/tidy-check` commands; `scripts/report.mjs` writes Markdown and HTML reports with a documented cleanliness score; an optional PostToolUse hook (`hooks/check-edit.mjs`, off until enabled per project) tells the agent about new findings in each file it edits.
 - Phase 5 commit style: `commit-style` skill and `scripts/commit-plan.mjs`, which groups changes into focused commits (AI tool files, removals, each area with its tests, config, docs), learns the commit format from history, lints draft messages (AI trailers and "Generated with" lines are refused) and commits one approved group at a time as the user.
 - Phase 4 simplify and humanize: `simplify-review` and `humanize-docs` skills, `references/patterns-by-language.md`, and `fix.mjs` scopes `simplify` and `docs`. Mechanical edits (unwrapping a try/catch that only rethrows, removing impossible null checks, deleting comments that repeat the code and banners, stripping emoji) are applied after approval; everything else is a rewrite proposed one change at a time with its code context. `fix.mjs start` prepares the branch for hand edits.
 - Phase 3 cleanups: `clean-traces` and `remove-leftovers` skills on top of `scripts/fix.mjs`, which plans numbered actions with previews and applies only approved ids on an `artisanal/<skill>-<date>` branch in a clean tree. AI tool files are untracked and added to `.gitignore` but kept on disk; untracked files, history and risky edits are left to a person.

@@ -54,6 +54,57 @@ function ignored(rawLines, line, rule) {
 }
 
 const clip = (s) => (s.length > 160 ? `${s.slice(0, 157)}...` : s);
+const ignoresWholeFile = (text) => /artisanal-ignore-file/.test(text.split("\n", 10).join("\n"));
+
+function readPackageJson(dir) {
+  try {
+    return JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"));
+  } catch {
+    return null; // No package.json, or not valid JSON: nothing to learn from it.
+  }
+}
+const binFilesOf = (pkg) => new Set(Object.values(typeof pkg?.bin === "string" ? { bin: pkg.bin } : pkg?.bin ?? {}).map((v) => String(v).replace(/^\.\//, "")));
+
+/** Collects findings with their rule metadata, honoring artisanal-ignore comments. */
+function makeCollector(ignoredFiles) {
+  const findings = [];
+  const push = (rule, base) => {
+    const meta = RULES.get(rule);
+    if (!meta) throw new Error(`Unknown rule ${rule}`);
+    findings.push({ rule, group: meta.group, severity: meta.severity, autoFixable: meta.autoFixable, message: meta.title, ...base, instead: meta.instead });
+  };
+  const fileAdder = (file, rawLines) => (rule, line, details = {}) => {
+    if (ignoredFiles.has(file) || (line !== null && ignored(rawLines, line, rule))) return;
+    const evidence = details.evidence ?? (line !== null ? clip((rawLines[line] ?? "").trim()) : file);
+    push(rule, {
+      file, line: line === null ? null : line + 1, ...(details.endLine !== undefined ? { endLine: details.endLine + 1 } : {}),
+      evidence, ...(details.message ? { message: details.message } : {}),
+    });
+  };
+  return { findings, push, fileAdder };
+}
+
+/**
+ * Findings from the per-file rules for one file (comments, catches, names, logging, docs), for
+ * the edit hook. Project-wide rules and commits are left out; the profile is read, not built.
+ */
+export function checkOneFile(projectDir, file, { profile = loadProfile(projectDir) } = {}) {
+  const dir = path.resolve(projectDir);
+  const rel = path.relative(dir, path.resolve(dir, file)).split(path.sep).join("/");
+  if (!rel || rel.startsWith("..") || path.isAbsolute(rel) || isSkippedPath(rel)) return [];
+  const text = readText(path.join(dir, rel));
+  if (text === null) return [];
+  const { findings, fileAdder } = makeCollector(new Set(ignoresWholeFile(text) ? [rel] : []));
+  const language = languageOf(rel);
+  if (ANALYZED[language] && !isGenerated(text)) {
+    const parsed = parseSource(text, language);
+    checkSource({
+      file: rel, language, text, parsed, isTest: Boolean(testPattern(rel, language, text)), langProfile: profile?.byLanguage?.[language],
+      isCli: isCli(rel, text, language, binFilesOf(readPackageJson(dir))), add: fileAdder(rel, parsed.raw),
+    });
+  } else if (isMarkdown(rel) && !aiToolEntry(rel)) checkMarkdown({ add: fileAdder(rel, text.split(/\r?\n/)) }, text);
+  return findings;
+}
 
 /** Runs every check on `projectDir` and returns the findings with a summary. */
 export function runChecks(projectDir = ".", opts = {}) {
@@ -72,13 +123,8 @@ export function runChecks(projectDir = ".", opts = {}) {
     profile ??= buildProfile(dir, { maxCommits });
   }
 
-  let packageJson = null;
-  try {
-    packageJson = JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"));
-  } catch {
-    // No package.json, or not valid JSON: nothing to learn from it.
-  }
-  const binFiles = new Set(Object.values(typeof packageJson?.bin === "string" ? { bin: packageJson.bin } : packageJson?.bin ?? {}).map((v) => String(v).replace(/^\.\//, "")));
+  const packageJson = readPackageJson(dir);
+  const binFiles = binFilesOf(packageJson);
 
   const texts = new Map();
   const sources = [];
@@ -90,26 +136,13 @@ export function runChecks(projectDir = ".", opts = {}) {
     const text = readText(path.join(dir, file));
     if (text === null) continue;
     texts.set(file, text);
-    if (/artisanal-ignore-file/.test(text.split("\n", 10).join("\n"))) ignoredFiles.add(file);
+    if (ignoresWholeFile(text)) ignoredFiles.add(file);
     if (ANALYZED[language] && !isGenerated(text)) {
       sources.push({ file, language, text, parsed: parseSource(text, language), isTest: Boolean(testPattern(file, language, text)) });
     }
   }
 
-  const findings = [];
-  const push = (rule, base) => {
-    const meta = RULES.get(rule);
-    if (!meta) throw new Error(`Unknown rule ${rule}`);
-    findings.push({ rule, group: meta.group, severity: meta.severity, autoFixable: meta.autoFixable, message: meta.title, ...base, instead: meta.instead });
-  };
-  const fileAdder = (file, rawLines) => (rule, line, details = {}) => {
-    if (ignoredFiles.has(file) || (line !== null && ignored(rawLines, line, rule))) return;
-    const evidence = details.evidence ?? (line !== null ? clip((rawLines[line] ?? "").trim()) : file);
-    push(rule, {
-      file, line: line === null ? null : line + 1, ...(details.endLine !== undefined ? { endLine: details.endLine + 1 } : {}),
-      evidence, ...(details.message ? { message: details.message } : {}),
-    });
-  };
+  const { findings, push, fileAdder } = makeCollector(ignoredFiles);
 
   for (const s of sources) {
     const add = fileAdder(s.file, s.parsed.raw);
