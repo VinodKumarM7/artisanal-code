@@ -211,4 +211,9 @@ test("the CLI writes findings.json and rejects bad options", (t) => {
   assert.equal(JSON.parse(readFileSync(path.join(dir, ".artisanal", "findings.json"), "utf8")).summary.findings, 0);
   assert.equal(spawnSync(process.execPath, [script, dir, "--rules", "no-such-rule"]).status, 2);
   assert.equal(spawnSync(process.execPath, [script, dir, "--nope"]).status, 2);
+  assert.equal(spawnSync(process.execPath, [script, dir, "--fail-on", "low", "--no-write"]).status, 0, "clean code passes --fail-on");
+  writeFileSync(path.join(dir, "index.js"), ["export function main() {", "  debugger;", "}", ""].join("\n"));
+  assert.equal(spawnSync(process.execPath, [script, dir, "--fail-on", "medium", "--no-write"]).status, 1, "a medium finding fails --fail-on medium");
+  assert.equal(spawnSync(process.execPath, [script, dir, "--fail-on", "high", "--no-write"]).status, 0, "but not --fail-on high");
+  assert.equal(spawnSync(process.execPath, [script, dir, "--fail-on", "urgent"]).status, 2);
 });

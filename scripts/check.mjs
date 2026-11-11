@@ -8,7 +8,9 @@
 // followed by rule ids; `artisanal-ignore-file` in the first ten lines skips the whole file.
 //
 // Usage: node check.mjs [projectDir] [--json] [--no-write] [--files a,b] [--rules id,...]
-//                       [--no-commits] [--max-commits N]
+//                       [--no-commits] [--max-commits N] [--fail-on high|medium|low]
+//
+// With --fail-on, the exit code is 1 when a finding at or above that severity is found (for CI).
 
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -219,7 +221,7 @@ export function formatText(report) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
-  const usage = "Usage: node check.mjs [projectDir] [--json] [--no-write] [--files a,b] [--rules id,...] [--no-commits] [--max-commits N]";
+  const usage = "Usage: node check.mjs [projectDir] [--json] [--no-write] [--files a,b] [--rules id,...] [--no-commits] [--max-commits N] [--fail-on high|medium|low]";
   const args = process.argv.slice(2);
   const opts = { json: false, write: true, dir: "." };
   let error = null;
@@ -229,6 +231,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     if (a === "--json") opts.json = true;
     else if (a === "--no-write") opts.write = false;
     else if (a === "--no-commits") opts.commits = false;
+    else if (a === "--fail-on") {
+      opts.failOn = args[++i];
+      if (!SEVERITIES.includes(opts.failOn)) error = "--fail-on needs high, medium or low";
+    }
     else if (a === "--files") opts.files = list(args[++i]);
     else if (a === "--rules") {
       opts.rules = list(args[++i]);
@@ -248,6 +254,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     try {
       const report = runChecks(opts.dir, opts);
       const file = opts.write ? writeArtisanalFile(opts.dir, "findings.json", report) : null;
+      if (opts.failOn && report.findings.some((f) => SEVERITIES.indexOf(f.severity) <= SEVERITIES.indexOf(opts.failOn))) process.exitCode = 1;
       if (opts.json) console.log(JSON.stringify(report, null, 2));
       else console.log(`${formatText(report)}${file ? `\nWritten to ${file}` : ""}`);
     } catch (err) {

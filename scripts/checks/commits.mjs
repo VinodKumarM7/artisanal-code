@@ -37,7 +37,7 @@ export function checkCommits(ctx, commits) {
 
     if (EMOJI.test(c.subject)) ctx.addCommit("emoji", c, { message: "Emoji in a commit subject" });
     const words = wordingIn([c.subject, ...proseLines(c.body)].join("\n"));
-    if (words.length) ctx.addCommit("ai-wording", c, { message: `Filler wording in a commit message: ${words.join(", ")}` });
+    if (words.length) ctx.addCommit("ai-wording", c, { message: `Filler wording in a commit message: ${words.map((w) => `"${w}"`).join(", ")}` });
 
     if (!c.root && c.files) {
       const changed = c.files.reduce((n, f) => n + f.added + f.deleted, 0);

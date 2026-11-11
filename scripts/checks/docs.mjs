@@ -22,7 +22,7 @@ export function checkMarkdown(ctx, text) {
     if (AI_MENTION.test(unquoted)) ctx.add("ai-mention", i);
     else if (AI_SELF_TALK.test(unquoted)) ctx.add("ai-self-talk", i);
     const words = wordingIn(unquoted);
-    if (words.length) ctx.add("ai-wording", i, { message: `Filler wording: ${words.join(", ")}` });
+    if (words.length) ctx.add("ai-wording", i, { message: `Filler wording: ${words.map((w) => `"${w}"`).join(", ")}` });
     if (EMOJI.test(prose)) emojiLines.push(i);
     if (isPlaceholder(prose)) ctx.add("placeholder-todo", i);
   });

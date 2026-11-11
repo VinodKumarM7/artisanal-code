@@ -1,6 +1,6 @@
 {
   "name": "artisanal-code",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Makes AI-assisted code read like a careful developer on your team wrote it: removes AI traces and leftover scripts, simplifies over-engineered code, and follows your project's own style. Shows every change before applying it.",
   "author": {
     "name": "VinodKumarM7"

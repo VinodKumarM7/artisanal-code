@@ -1,7 +1,10 @@
 # Changelog
 
-## 0.0.1 (unreleased)
+## 0.1.0 (2026-11-12)
 
+First release: seven skills, the `/tidy` and `/tidy-check` commands and an optional edit hook.
+
+- Phase 7 release: `scripts/install.mjs` installs the skills for Codex, Cursor, Claude Code without plugins, or any folder of `SKILL.md` skills; `check.mjs --fail-on` for CI; CI on Linux and Windows with Node 20 and 22; a sample report in `docs/sample-report/`; README rewritten.
 - Phase 6 hook and report: `/tidy` and `/tidy-check` commands; `scripts/report.mjs` writes Markdown and HTML reports with a documented cleanliness score; an optional PostToolUse hook (`hooks/check-edit.mjs`, off until enabled per project) tells the agent about new findings in each file it edits.
 - Phase 5 commit style: `commit-style` skill and `scripts/commit-plan.mjs`, which groups changes into focused commits (AI tool files, removals, each area with its tests, config, docs), learns the commit format from history, lints draft messages (AI trailers and "Generated with" lines are refused) and commits one approved group at a time as the user.
 - Phase 4 simplify and humanize: `simplify-review` and `humanize-docs` skills, `references/patterns-by-language.md`, and `fix.mjs` scopes `simplify` and `docs`. Mechanical edits (unwrapping a try/catch that only rethrows, removing impossible null checks, deleting comments that repeat the code and banners, stripping emoji) are applied after approval; everything else is a rewrite proposed one change at a time with its code context. `fix.mjs start` prepares the branch for hand edits.
