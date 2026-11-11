@@ -167,7 +167,7 @@ test("caseStyle names the common styles", () => {
 });
 
 test("classifySubject separates the format from the description", () => {
-  assert.deepEqual(classifySubject("feat(api): add paging"), { format: "conventional", type: "feat", scoped: true, description: "add paging" });
+  assert.deepEqual(classifySubject("feat(api): add paging"), { format: "conventional", type: "feat", scoped: true, scope: "api", description: "add paging" });
   assert.equal(classifySubject("ABC-123: Fix login").format, "ticket");
   assert.equal(classifySubject("ABC-123: Fix login").description, "Fix login");
   assert.equal(classifySubject("[ui] Tidy header").format, "bracket-tag");

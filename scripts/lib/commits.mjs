@@ -28,7 +28,7 @@ export function verbForm(word) {
 /** Splits a commit subject into its format and the description that follows any prefix. */
 export function classifySubject(subject) {
   const conv = subject.match(/^([a-z]+)(\([^)]*\))?!?:\s+(.*)$/i);
-  if (conv && CONVENTIONAL_TYPES.has(conv[1].toLowerCase())) return { format: "conventional", type: conv[1].toLowerCase(), scoped: Boolean(conv[2]), description: conv[3] };
+  if (conv && CONVENTIONAL_TYPES.has(conv[1].toLowerCase())) return { format: "conventional", type: conv[1].toLowerCase(), scoped: Boolean(conv[2]), scope: conv[2] ? conv[2].slice(1, -1) : null, description: conv[3] };
   const ticket = subject.match(/^\[?([A-Z][A-Z0-9]+-\d+)\]?[:\s-]+(.*)$/) ?? subject.match(/^\(?#\d+\)?[:\s-]+(.*)$/);
   if (ticket) return { format: "ticket", description: ticket[ticket.length - 1] };
   const tag = subject.match(/^\[([^\]]+)\]\s*(.*)$/);

@@ -36,7 +36,7 @@ Clears out what an AI coding session tends to leave behind, without changing wha
 
 6. Report what the script printed: branch, applied and skipped ids with reasons, and the diff summary. Then ask whether to run the project's existing tests (the `test` script in package.json, `pytest`, and so on). Run them only with the user's permission, and report the result as it is, including failures.
 
-7. For the "needs a person" items, explain each one. Do the work or delete a placeholder only if the user asks; a deleted TODO hides unfinished code. Offer a commit message in the project's own format (see `commits` in `.artisanal/profile.json`) and commit only if the user asks.
+7. For the "needs a person" items, explain each one. Do the work or delete a placeholder only if the user asks; a deleted TODO hides unfinished code. Offer the `commit-style` skill to commit the changes in the project's own message format, and commit only if the user asks.
 
 ## Safety rules
 

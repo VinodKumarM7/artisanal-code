@@ -34,7 +34,7 @@ Removes AI attribution and AI tool files from a project without changing what th
 
 5. Report what the script printed: the branch, applied and skipped ids with reasons, and the diff summary. Offer to show `git diff HEAD`. For each "needs a person" line in a file, you may propose the exact edit, show it, and apply it after approval.
 
-6. Offer a commit message in the project's own format (read `commits.format` and `commits.recentSubjects` in `.artisanal/profile.json`, or run the `learn-style` skill). Commit only if the user asks, and never add AI co-author trailers or "Generated with" lines to that commit.
+6. Offer the `commit-style` skill to commit the changes in the project's own message format. Commit only if the user asks, and never add AI co-author trailers or "Generated with" lines to that commit.
 
 ## Commit history
 

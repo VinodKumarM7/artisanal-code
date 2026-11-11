@@ -188,11 +188,13 @@ function testsSummary(tests, sourceFiles, frameworks) {
   };
 }
 
-function commitsSummary(dir, maxCommits) {
+/** Commit message habits from recent history; `analyzed` is 0 when there are no commits. */
+export function commitsSummary(dir, maxCommits = DEFAULT_MAX_COMMITS) {
   const commits = readCommits(dir, maxCommits);
   if (!commits.length) return { analyzed: 0 };
   const formats = {};
   const types = {};
+  const scopes = {};
   const moods = {};
   const lengths = [];
   let scoped = 0, capitalized = 0, period = 0, emoji = 0, withBody = 0, bulletBodies = 0;
@@ -202,6 +204,7 @@ function commitsSummary(dir, maxCommits) {
     bump(formats, s.format);
     if (s.type) bump(types, s.type);
     if (s.scoped) scoped++;
+    if (s.scope) bump(scopes, s.scope);
     lengths.push(c.subject.length);
     if (/^[A-Z]/.test(s.description)) capitalized++;
     if (/\.$/.test(c.subject)) period++;
@@ -225,7 +228,7 @@ function commitsSummary(dir, maxCommits) {
   return {
     total: countCommits(dir) || n, analyzed: n, authors: new Set(commits.map((c) => c.author)).size,
     format: { dominant: rankedFormats[0][0], share: share(rankedFormats[0][1], n), counts: formats },
-    ...(Object.keys(types).length ? { conventionalTypes: types, scopedShare: share(scoped, formats.conventional ?? 0) } : {}),
+    ...(Object.keys(types).length ? { conventionalTypes: types, scopedShare: share(scoped, formats.conventional ?? 0), scopes } : {}),
     subject: {
       medianLength: median(lengths), p90Length: percentile(lengths, 0.9), capitalizedShare: share(capitalized, n),
       endsWithPeriodShare: share(period, n), emojiShare: share(emoji, n),

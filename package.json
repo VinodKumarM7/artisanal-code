@@ -13,6 +13,7 @@
     "doctor": "node skills/artisanal-doctor/scripts/doctor.mjs",
     "profile": "node scripts/profile.mjs",
     "check": "node scripts/check.mjs",
-    "fix": "node scripts/fix.mjs"
+    "fix": "node scripts/fix.mjs",
+    "commit-plan": "node scripts/commit-plan.mjs"
   }
 }
