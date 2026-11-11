@@ -77,7 +77,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     console.error(`doctor: unknown option ${bad}\nUsage: node doctor.mjs [projectDir] [--json]`);
     process.exitCode = 2;
   } else {
-    const result = diagnose(args.find((a) => !a.startsWith("--")) ?? ".");
-    console.log(args.includes("--json") ? JSON.stringify(result, null, 2) : formatText(result));
+    const diagnosis = diagnose(args.find((a) => !a.startsWith("--")) ?? ".");
+    console.log(args.includes("--json") ? JSON.stringify(diagnosis, null, 2) : formatText(diagnosis));
   }
 }

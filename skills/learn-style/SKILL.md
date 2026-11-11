@@ -12,10 +12,10 @@ Measures how a project is already written, so later cleanups match the team's ow
 1. Run the profile script from this skill's base directory, passing the project folder (default: the current folder):
 
    ```
-   node scripts/profile.mjs <projectDir>
+   node ../../scripts/profile.mjs <projectDir>
    ```
 
-   Use the absolute path of this skill's folder if the working directory is different. Options: `--json` prints the full profile, `--no-write` skips saving it, `--max-commits N` changes how many recent commits are read (default 300).
+   The script lives in the plugin's `scripts` folder, two levels up from this skill; use its absolute path if the working directory is different. Options: `--json` prints the full profile, `--no-write` skips saving it, `--max-commits N` changes how many recent commits are read (default 300).
 
 2. Show the user the summary the script printed, then describe the style in a few plain sentences: naming per language, indentation, how much the code comments, typical function length, how errors are handled, where tests live and how commit messages are written. Use only numbers from the script output or from `.artisanal/profile.json`.
 

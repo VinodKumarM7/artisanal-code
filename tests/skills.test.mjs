@@ -34,7 +34,7 @@ for (const name of skills) {
     assert.match(fm.description, /Use when/i);
     assert.match(text, /^## Workflow$/m);
     assert.match(text, /^## Safety rules$/m);
-    for (const [, rel] of text.matchAll(/node (scripts\/[\w./-]+\.mjs)/g)) {
+    for (const [, rel] of text.matchAll(/node ((?:\.\.\/)*scripts\/[\w./-]+\.mjs)/g)) {
       assert.ok(existsSync(path.join(skillsDir, name, rel)), `${rel} exists`);
     }
   });

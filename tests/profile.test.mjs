@@ -5,10 +5,10 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { analyzeSource, buildProfile, caseStyle, classifySubject, formatText, lexC, writeProfile } from "../skills/learn-style/scripts/profile.mjs";
+import { analyzeSource, buildProfile, caseStyle, classifySubject, formatText, lexC, writeProfile } from "../scripts/profile.mjs";
 
 const hasGit = spawnSync("git", ["--version"]).status === 0;
-const script = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../skills/learn-style/scripts/profile.mjs");
+const script = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../scripts/profile.mjs");
 
 function tempDir(t) {
   const dir = mkdtempSync(path.join(tmpdir(), "artisanal-profile-"));

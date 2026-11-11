@@ -33,3 +33,7 @@ plan.md
 
 # Output this tool writes into a project
 .artisanal/
+
+# Planted on purpose in the example the checks are tested against
+!examples/ai-heavy-project/AGENTS.md
+!examples/ai-heavy-project/.cursorrules

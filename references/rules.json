@@ -1,0 +1,294 @@
+{
+  "groups": {
+    "traces": "AI traces",
+    "comments": "Comment noise",
+    "defensive": "Defensive bloat",
+    "design": "Over-engineering",
+    "naming": "Naming",
+    "leftovers": "Leftovers",
+    "wording": "Wording",
+    "commits": "Commits"
+  },
+  "rules": [
+    {
+      "id": "ai-mention",
+      "group": "traces",
+      "severity": "high",
+      "autoFixable": true,
+      "title": "Comment or doc line that credits an AI tool",
+      "instead": "Delete the line. Who wrote the code is recorded in git, not in the file."
+    },
+    {
+      "id": "ai-self-talk",
+      "group": "traces",
+      "severity": "high",
+      "autoFixable": true,
+      "title": "Chat-style phrase left in a comment or doc",
+      "instead": "Delete it, or say what the code does: \"Retries twice on timeout\" rather than \"Here is the updated code as requested\"."
+    },
+    {
+      "id": "ai-tool-file-tracked",
+      "group": "traces",
+      "severity": "high",
+      "autoFixable": true,
+      "title": "AI tool file tracked or about to be committed",
+      "instead": "Add it to .gitignore and untrack it with `git rm --cached`; the local file keeps working."
+    },
+    {
+      "id": "ai-commit-trailer",
+      "group": "traces",
+      "severity": "high",
+      "autoFixable": false,
+      "title": "AI co-author trailer in a commit message",
+      "instead": "Leave the trailer out of new commits. Changing pushed commits needs a history rewrite, so only do it when asked."
+    },
+    {
+      "id": "ai-commit-mention",
+      "group": "traces",
+      "severity": "medium",
+      "autoFixable": false,
+      "title": "\"Generated with\" line in a commit message",
+      "instead": "Describe the change instead: \"Add CSV export for orders\"."
+    },
+    {
+      "id": "comment-restates-code",
+      "group": "comments",
+      "severity": "low",
+      "autoFixable": true,
+      "title": "Comment that repeats the next line",
+      "instead": "Delete it. Keep comments for why, not what: \"Cents avoid float rounding\" rather than \"Set the total\"."
+    },
+    {
+      "id": "section-banner",
+      "group": "comments",
+      "severity": "low",
+      "autoFixable": true,
+      "title": "Section banner in a short file",
+      "instead": "Delete the banner; a short file reads fine without dividers."
+    },
+    {
+      "id": "doc-longer-than-code",
+      "group": "comments",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Doc comment longer than the code it describes",
+      "instead": "One line is enough for a small function: \"Formats cents as dollars.\""
+    },
+    {
+      "id": "this-function-comment",
+      "group": "comments",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "\"This function ...\" comment on a small function",
+      "instead": "Delete it if the name says the same thing, or start with the verb: \"Returns the active users.\""
+    },
+    {
+      "id": "catch-rethrow-only",
+      "group": "defensive",
+      "severity": "medium",
+      "autoFixable": true,
+      "title": "Catch block that only rethrows the same error",
+      "instead": "Remove the try/catch; the error propagates the same way without it."
+    },
+    {
+      "id": "catch-log-only",
+      "group": "defensive",
+      "severity": "medium",
+      "autoFixable": false,
+      "title": "Catch block that only logs and carries on",
+      "instead": "Handle the error, or let it propagate. Logging and continuing hides failures."
+    },
+    {
+      "id": "empty-catch",
+      "group": "defensive",
+      "severity": "medium",
+      "autoFixable": false,
+      "title": "Empty catch block",
+      "instead": "Handle the error or let it propagate. If ignoring it is intended, say why in a comment."
+    },
+    {
+      "id": "catch-all",
+      "group": "defensive",
+      "severity": "medium",
+      "autoFixable": false,
+      "title": "Handler that catches everything",
+      "instead": "Catch the errors you expect: `except OSError:` rather than `except:`."
+    },
+    {
+      "id": "null-check-on-fresh-value",
+      "group": "defensive",
+      "severity": "low",
+      "autoFixable": true,
+      "title": "Null check on a value that cannot be null",
+      "instead": "Remove the check; a new object or literal is never null."
+    },
+    {
+      "id": "single-implementation-interface",
+      "group": "design",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Interface with a single implementation",
+      "instead": "Use the class directly until a second implementation (or a test double) needs the interface."
+    },
+    {
+      "id": "single-product-factory",
+      "group": "design",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Factory that always builds the same thing",
+      "instead": "Call the constructor where the object is needed."
+    },
+    {
+      "id": "forwarding-wrapper",
+      "group": "design",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Function that only forwards its arguments to another function",
+      "instead": "Call the inner function directly, or export it under the name you need."
+    },
+    {
+      "id": "single-use-config",
+      "group": "design",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Config object used in one place",
+      "instead": "Inline the value where it is used."
+    },
+    {
+      "id": "generic-name",
+      "group": "naming",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Variable name that says nothing about its content",
+      "instead": "Name what it holds: `activeUsers` rather than `data`, `invoiceTotal` rather than `result`."
+    },
+    {
+      "id": "vague-function-name",
+      "group": "naming",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Function name with no domain meaning",
+      "instead": "Name what it does: `indexInStockItemsBySku` rather than `processData`."
+    },
+    {
+      "id": "dumping-ground-file",
+      "group": "naming",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "utils or helpers file collecting unrelated functions",
+      "instead": "Move each function next to the code that uses it, or into a module named for what it does."
+    },
+    {
+      "id": "naming-style-mismatch",
+      "group": "naming",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Name that does not follow the project's naming style",
+      "instead": "Use the style the rest of the project uses for this kind of name."
+    },
+    {
+      "id": "file-name-style-mismatch",
+      "group": "naming",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "File name that does not follow the project's file naming",
+      "instead": "Rename the file to the project's style and update its imports."
+    },
+    {
+      "id": "indentation-mismatch",
+      "group": "naming",
+      "severity": "low",
+      "autoFixable": true,
+      "title": "File indented differently from the rest of the project",
+      "instead": "Re-indent the file with the project's indentation, or run the project's formatter."
+    },
+    {
+      "id": "unreferenced-file",
+      "group": "leftovers",
+      "severity": "medium",
+      "autoFixable": false,
+      "title": "Source file nothing refers to",
+      "instead": "Delete it if it is unused. If something loads it by name, mention it where it is run (package.json, CI, README)."
+    },
+    {
+      "id": "scratch-file",
+      "group": "leftovers",
+      "severity": "medium",
+      "autoFixable": false,
+      "title": "Scratch, debug or backup file left in the project",
+      "instead": "Delete it, or move it into the project's tests or scripts and refer to it from there."
+    },
+    {
+      "id": "commented-out-code",
+      "group": "leftovers",
+      "severity": "low",
+      "autoFixable": true,
+      "title": "Commented-out code",
+      "instead": "Delete it; git keeps the old version."
+    },
+    {
+      "id": "debug-logging",
+      "group": "leftovers",
+      "severity": "medium",
+      "autoFixable": true,
+      "title": "Debug logging or breakpoint left in the code",
+      "instead": "Remove it, or use the project's logger at the right level."
+    },
+    {
+      "id": "placeholder-todo",
+      "group": "leftovers",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Placeholder TODO or elided-code marker",
+      "instead": "Do the work, or write a specific TODO with an owner or ticket: \"TODO(ABC-12): retry on 429\"."
+    },
+    {
+      "id": "not-implemented-stub",
+      "group": "leftovers",
+      "severity": "medium",
+      "autoFixable": false,
+      "title": "Function stub that does nothing or throws \"not implemented\"",
+      "instead": "Implement it or remove it and its callers."
+    },
+    {
+      "id": "ai-wording",
+      "group": "wording",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Marketing or filler wording",
+      "instead": "Say what it does in plain words: \"Retries failed uploads\" rather than \"A robust, seamless upload experience\"."
+    },
+    {
+      "id": "emoji",
+      "group": "wording",
+      "severity": "low",
+      "autoFixable": true,
+      "title": "Emoji in docs, comments, logs or commit subjects",
+      "instead": "Drop the emoji; the words carry the meaning."
+    },
+    {
+      "id": "large-mixed-commit",
+      "group": "commits",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Very large commit touching many areas",
+      "instead": "Split future work into focused commits, one change each."
+    },
+    {
+      "id": "templated-commit-message",
+      "group": "commits",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Commit message laid out like a generated report",
+      "instead": "A subject line and, if needed, a short paragraph on why: \"Add CSV export\\n\\nFinance needs monthly exports.\""
+    },
+    {
+      "id": "commit-format-mismatch",
+      "group": "commits",
+      "severity": "low",
+      "autoFixable": false,
+      "title": "Commit subject in a different format from the rest of the history",
+      "instead": "Use the format the history already uses."
+    }
+  ]
+}
