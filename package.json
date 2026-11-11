@@ -12,6 +12,7 @@
     "test": "node --test",
     "doctor": "node skills/artisanal-doctor/scripts/doctor.mjs",
     "profile": "node scripts/profile.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "fix": "node scripts/fix.mjs"
   }
 }

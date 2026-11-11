@@ -2,6 +2,7 @@
 
 ## 0.0.1 (unreleased)
 
+- Phase 3 cleanups: `clean-traces` and `remove-leftovers` skills on top of `scripts/fix.mjs`, which plans numbered actions with previews and applies only approved ids on an `artisanal/<skill>-<date>` branch in a clean tree. AI tool files are untracked and added to `.gitignore` but kept on disk; untracked files, history and risky edits are left to a person.
 - Phase 2 checks: `scripts/check.mjs` runs 35 rules (AI traces, comment noise, defensive bloat, over-engineering, naming, leftovers, wording, commits) against the style profile and writes `.artisanal/findings.json`. Unreferenced-file detection follows imports, class names, package.json, CI and doc mentions. Rules, severities and suggested rewrites are in `references/rules.json`. `examples/ai-heavy-project` (every rule planted) and `examples/clean-project` (no findings) back the tests.
 - The profile script moved to `scripts/profile.mjs`, sharing its parser with the checks.
 - Phase 1 style profile: `learn-style` skill and `profile.mjs`, which measure languages, naming, comment density, function length, error handling, logging, indentation, test layout and commit message format (JavaScript, TypeScript, Python, Apex, Java) and write `.artisanal/profile.json`.

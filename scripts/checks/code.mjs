@@ -116,7 +116,7 @@ function commentChecks(ctx) {
   let run = [];
   const flushRun = () => {
     if (run.length >= 2 || (run.length === 1 && !CLOSING_ONLY.test(lines[run[0]].text))) {
-      ctx.add("commented-out-code", run[0], { message: run.length > 1 ? `${run.length} lines of commented-out code` : "Commented-out line of code" });
+      ctx.add("commented-out-code", run[0], { endLine: run[run.length - 1], message: run.length > 1 ? `${run.length} lines of commented-out code` : "Commented-out line of code" });
     }
     run = [];
   };
@@ -126,8 +126,10 @@ function commentChecks(ctx) {
     const text = l.text;
     const commentOnly = hasComment && !l.code.trim();
     if (hasComment && text) {
-      if (AI_MENTION.test(text)) ctx.add("ai-mention", i);
-      else if (AI_SELF_TALK.test(text)) ctx.add("ai-self-talk", i);
+      // A quoted phrase is being talked about, not left behind.
+      const unquoted = text.replace(/"[^"]*"|“[^”]*”/g, "");
+      if (AI_MENTION.test(unquoted)) ctx.add("ai-mention", i);
+      else if (AI_SELF_TALK.test(unquoted)) ctx.add("ai-self-talk", i);
       const words = wordingIn(text);
       if (words.length) ctx.add("ai-wording", i, { message: `Filler wording: ${words.join(", ")}` });
       if (EMOJI.test(text)) ctx.add("emoji", i);

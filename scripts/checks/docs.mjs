@@ -17,8 +17,10 @@ export function checkMarkdown(ctx, text) {
     }
     if (fence || !line.trim()) return;
     const prose = line.replace(/`[^`]*`/g, "");
-    if (AI_MENTION.test(prose)) ctx.add("ai-mention", i);
-    else if (AI_SELF_TALK.test(prose)) ctx.add("ai-self-talk", i);
+    // A quoted phrase ("Here is the updated code") is being talked about, not left behind.
+    const unquoted = prose.replace(/"[^"]*"|“[^”]*”/g, "");
+    if (AI_MENTION.test(unquoted)) ctx.add("ai-mention", i);
+    else if (AI_SELF_TALK.test(unquoted)) ctx.add("ai-self-talk", i);
     const words = wordingIn(prose);
     if (words.length) ctx.add("ai-wording", i, { message: `Filler wording: ${words.join(", ")}` });
     if (EMOJI.test(prose)) emojiLines.push(i);

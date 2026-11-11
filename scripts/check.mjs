@@ -105,7 +105,10 @@ export function runChecks(projectDir = ".", opts = {}) {
   const fileAdder = (file, rawLines) => (rule, line, details = {}) => {
     if (ignoredFiles.has(file) || (line !== null && ignored(rawLines, line, rule))) return;
     const evidence = details.evidence ?? (line !== null ? clip((rawLines[line] ?? "").trim()) : file);
-    push(rule, { file, line: line === null ? null : line + 1, evidence, ...(details.message ? { message: details.message } : {}) });
+    push(rule, {
+      file, line: line === null ? null : line + 1, ...(details.endLine !== undefined ? { endLine: details.endLine + 1 } : {}),
+      evidence, ...(details.message ? { message: details.message } : {}),
+    });
   };
 
   for (const s of sources) {
