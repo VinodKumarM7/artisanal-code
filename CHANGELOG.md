@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0 (2026-11-12)
+
+- `npx artisanal-code <command>`: one command for install, check, report, profile, fix, commit-plan, doctor and hook. `install` without `--agent` asks which agent to install for. Also runs straight from GitHub with `npx github:VinodKumarM7/artisanal-code`.
+- The npm package ships only what the commands need (scripts, skills, references, hooks, commands and the plugin manifest).
+
 ## 0.1.0 (2026-11-12)
 
 First release: seven skills, the `/tidy` and `/tidy-check` commands and an optional edit hook.

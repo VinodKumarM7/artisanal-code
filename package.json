@@ -1,10 +1,39 @@
 {
   "name": "artisanal-code",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.2.0",
   "description": "Clean, simple, codebase-native code from AI coding agents.",
   "license": "MIT",
+  "author": "VinodKumarM7",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VinodKumarM7/artisanal-code.git"
+  },
+  "homepage": "https://github.com/VinodKumarM7/artisanal-code#readme",
+  "bugs": "https://github.com/VinodKumarM7/artisanal-code/issues",
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "codex",
+    "cursor",
+    "agent-skills",
+    "code-quality",
+    "clean-code",
+    "refactoring",
+    "dead-code"
+  ],
   "type": "module",
+  "bin": {
+    "artisanal-code": "scripts/cli.mjs"
+  },
+  "files": [
+    "scripts/",
+    "skills/",
+    "references/",
+    "hooks/",
+    "commands/",
+    ".claude-plugin/",
+    "CHANGELOG.md"
+  ],
   "engines": {
     "node": ">=20"
   },

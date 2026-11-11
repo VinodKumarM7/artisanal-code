@@ -29,16 +29,33 @@ There are 35 rules in all; see [`references/rules.json`](references/rules.json) 
 
 ### Other agents
 
-Clone the repository, then run the install script with Node.js 20 or later:
+With Node.js 20 or later:
 
 ```
-node scripts/install.mjs --agent codex                        # ~/.codex/skills
-node scripts/install.mjs --agent cursor --dest path/to/project # .cursor/rules/artisanal-*.mdc
-node scripts/install.mjs --agent claude                       # ~/.claude/skills and commands, without the plugin system
-node scripts/install.mjs --agent dir --dest path/to/skills     # any agent that reads SKILL.md folders
+npx artisanal-code install
 ```
 
-The scripts are copied to `~/.artisanal-code` (change with `--home`), and the skills point there. Existing files are kept unless you pass `--force`; `--dry-run` lists what would be written.
+It asks which agent to install for. To choose up front:
+
+```
+npx artisanal-code install --agent codex                         # ~/.codex/skills
+npx artisanal-code install --agent cursor --dest path/to/project # .cursor/rules/artisanal-*.mdc
+npx artisanal-code install --agent claude                        # ~/.claude/skills and commands, without the plugin system
+npx artisanal-code install --agent dir --dest path/to/skills     # any agent that reads SKILL.md folders
+```
+
+The scripts are copied to `~/.artisanal-code` (change with `--home`), and the skills point there. Existing files are kept unless you pass `--force`; `--dry-run` lists what would be written. To run the latest code from GitHub instead of npm, use `npx github:VinodKumarM7/artisanal-code install`.
+
+### Command line
+
+The same command runs the checks without any agent:
+
+```
+npx artisanal-code check .            # findings with file, line and evidence
+npx artisanal-code report .           # Markdown and HTML report with the cleanliness score
+npx artisanal-code profile .          # the project's style profile
+npx artisanal-code help               # every command
+```
 
 ## Use
 
@@ -77,7 +94,7 @@ Each finding costs points by severity: 4 (high), 2 (medium) or 0.5 (low). One ru
 ## Using the checks in CI
 
 ```
-node scripts/check.mjs . --no-write --fail-on medium
+npx artisanal-code check . --no-write --fail-on medium
 ```
 
 The exit code is 1 when a finding at or above the given severity is found. Add `artisanal-ignore` (optionally followed by rule ids) on or above a line to skip it, or `artisanal-ignore-file` near the top of a file.
