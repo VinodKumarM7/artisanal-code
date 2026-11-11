@@ -1,0 +1,35 @@
+# Dependencies and logs
+node_modules/
+*.log
+coverage/
+*.tmp
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# Local environment and secrets
+.env
+.env.*
+
+# AI tool files (used locally, not published)
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+.claude/
+.cursor/
+.cursorrules
+.windsurfrules
+.aider*
+.github/copilot-instructions.md
+
+# Internal planning notes (kept locally, not published)
+plan.md
+
+# Output this tool writes into a project
+.artisanal/
